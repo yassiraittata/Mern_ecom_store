@@ -1,3 +1,5 @@
+import constants from "../utils/constants.js";
+
 const errorHandler = (err, req, res, next) => {
   const statusCode = err.status ?? constants.SERVER_ERROR;
 
