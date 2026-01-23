@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
-import { env } from "../utils/validateEnv.js";
+import env from "../utils/envalidate.js";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(env.MONGODB_URI);
+    await mongoose.connect(env.MONGO_URI);
     console.log("MongoDB connected successfully");
   } catch (error) {
     console.error("MongoDB connection failed:", error.message);
