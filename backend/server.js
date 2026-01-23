@@ -3,6 +3,7 @@ import env from "./utils/envalidate.js";
 import createHttpError from "http-errors";
 import authRoutes from "./routes/auth.route.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import connectDB from "./lib/db.js";
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -19,6 +20,8 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 });
