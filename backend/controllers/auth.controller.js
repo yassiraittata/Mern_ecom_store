@@ -90,9 +90,36 @@ export const signup = async (req, res, next) => {
   });
 };
 
-export const login = (req, res, next) => {
-  // Handle login
-  res.json({ message: "Login route" });
+export const login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(createHttpError(400, "Email and password are required"));
+  }
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return next(createHttpError(401, "Invalid email or password"));
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return next(createHttpError(401, "Invalid email or password"));
+  }
+
+  const { accessToken, refreshToken } = generateTokens(user._id);
+  await storeRefreshToken(user._id, refreshToken);
+  setCookies(res, accessToken, refreshToken);
+  res.status(200).json({
+    success: true,
+    message: "Logged in successfully",
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  });
 };
 
 export const logout = (req, res, next) => {
