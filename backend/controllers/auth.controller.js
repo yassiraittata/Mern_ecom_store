@@ -139,3 +139,38 @@ export const logout = (req, res, next) => {
     next(error);
   }
 };
+
+export const refreshToken = async (req, res, next) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) {
+    return next(createHttpError(403, "Refresh token not found"));
+  }
+
+  const decoded = jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET);
+  const userId = decoded.userId;
+  const storedToken = await redis.get(`refreshToken:${userId}`);
+
+  if (storedToken !== refreshToken) {
+    return next(createHttpError(403, "Invalid refresh token"));
+  }
+
+  const newAccessToken = jwt.sign({ userId }, env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+
+  res.cookie("accessToken", newAccessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 15 * 60 * 1000,
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Access token refreshed successfully",
+    accessToken: newAccessToken,
+  });
+};
+
+// get profile
+export const getProfile = async (req, res, next) => {};

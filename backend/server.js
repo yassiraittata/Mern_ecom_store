@@ -5,7 +5,9 @@ import createHttpError from "http-errors";
 import env from "./utils/envalidate.js";
 import connectDB from "./lib/db.js";
 import errorHandler from "./middlewares/errorHandler.js";
+
 import authRoutes from "./routes/auth.route.js";
+import productRoutes from "./routes/product.route.js";
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -16,6 +18,7 @@ app.use(cookieParser());
 
 // routes
 app.use("/api/auth", authRoutes);
+app.use("/api/products", productRoutes);
 
 app.use((req, res, next) => {
   next(createHttpError(404, "Endpoint was not Found"));
