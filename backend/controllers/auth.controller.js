@@ -86,7 +86,6 @@ export const signup = async (req, res, next) => {
       name: user.name,
       email: user.email,
       role: user.role,
-      password: user.password,
     },
   });
 };
@@ -97,6 +96,19 @@ export const login = (req, res, next) => {
 };
 
 export const logout = (req, res, next) => {
-  // Handle logout
-  res.json({ message: "Logout route" });
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (refreshToken) {
+      const decoded = jwt.verify(refreshToken, env.REFRESH_TOKEN_SECRET);
+      const userId = decoded.userId;
+      redis.del(`refreshToken:${userId}`);
+    }
+
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    next(error);
+  }
 };
