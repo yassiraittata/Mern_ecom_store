@@ -1,7 +1,45 @@
 import createHttpError from "http-errors";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 import User from "../models/user.model.js";
+import env from "../utils/envalidate.js";
+import { redis } from "../lib/redis.js";
+
+const generateTokens = (userId) => {
+  const accessToken = jwt.sign({ userId }, env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "15m",
+  });
+  const refreshToken = jwt.sign({ userId }, env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+  });
+
+  return { accessToken, refreshToken };
+};
+
+const storeRefreshToken = async (userId, refreshToken) => {
+  await redis.set(
+    `refreshToken:${userId}`,
+    refreshToken,
+    "EX",
+    7 * 24 * 60 * 60,
+  );
+};
+
+const setCookies = (res, accessToken, refreshToken) => {
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 15 * 60 * 1000,
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "Strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+};
 
 export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -35,11 +73,16 @@ export const signup = async (req, res, next) => {
 
   await user.save();
 
+  // authenticate
+  const { accessToken, refreshToken } = generateTokens(user._id);
+  storeRefreshToken(user._id, refreshToken);
+  setCookies(res, accessToken, refreshToken);
+
   res.status(201).json({
     success: true,
     message: "User created successfully",
     user: {
-      id: user._id,
+      _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
