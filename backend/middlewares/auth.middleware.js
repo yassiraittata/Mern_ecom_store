@@ -1,6 +1,7 @@
 import createHttpError from "http-errors";
-import env from "../utils/envalidate";
+import env from "../utils/envalidate.js";
 import User from "../models/user.model.js";
+import jwt from "jsonwebtoken";
 
 export const protectRoute = async (req, res, next) => {
   const accessToken = req.cookies.accessToken;
@@ -20,5 +21,12 @@ export const protectRoute = async (req, res, next) => {
   }
 
   req.user = user;
+  next();
+};
+
+export const adminRoute = (req, res, next) => {
+  if (req.user.role !== "admin") {
+    return next(createHttpError(403, "Access denied - Admins only"));
+  }
   next();
 };
