@@ -8,3 +8,11 @@ export const getAllProducts = async (req, res, next) => {
     products,
   });
 };
+
+export const getFeaturedProducts = async (req, res, next) => {
+  const featuredProducts = await product.find({ isFeatured: true });
+  res.status(200).json({
+    success: true,
+    featuredProducts,
+  });
+};
