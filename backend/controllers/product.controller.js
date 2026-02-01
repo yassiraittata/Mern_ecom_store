@@ -60,3 +60,28 @@ export const createProduct = async (req, res, next) => {
     product: newProduct,
   });
 };
+
+export const deleteProduct = async (req, res, next) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+
+  if (!product) {
+    return next(createHttpError(404, "Product not found"));
+  }
+
+  if (product.image) {
+    try {
+      const publicId = product.image.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(`products/${publicId}`);
+    } catch (error) {
+      console.error("Error deleting image from Cloudinary:", error);
+    }
+  }
+
+  await Product.findByIdAndDelete(id);
+
+  res.status(200).json({
+    success: true,
+    message: "Product deleted successfully",
+  });
+};
