@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getAllProducts,
   getFeaturedProducts,
-  getFeaturedProducts,
+  createProduct,
 } from "../controllers/product.controller.js";
 import { protectRoute, adminRoute } from "../middlewares/auth.middleware.js";
 
