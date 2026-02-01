@@ -25,7 +25,7 @@ const productSchema = new mongoose.Schema({
   isFeatured: {
     type: Boolean,
     default: false,
-  }, 
+  },
 });
 
 export default mongoose.model("Product", productSchema);
