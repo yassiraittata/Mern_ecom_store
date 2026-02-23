@@ -102,7 +102,7 @@ export const login = async (req, res, next) => {
     return next(createHttpError(401, "Invalid email or password"));
   }
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  const isMatch = await user.comparePassword(password);
   if (!isMatch) {
     return next(createHttpError(401, "Invalid email or password"));
   }
