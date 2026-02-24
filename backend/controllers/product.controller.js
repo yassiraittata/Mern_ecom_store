@@ -116,3 +116,28 @@ export const getProductsByCategory = async (req, res, next) => {
     products,
   });
 };
+
+export const toggleFeaturedProduct = async (req, res, next) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+
+  if (!product) {
+    return next(createHttpError(404, "Product not found"));
+  }
+
+  product.isFeatured = !product.isFeatured;
+  const updatedProduct = await product.save();
+  // updtae the cash
+  await updateFeaturedProductsCache();
+
+  res.status(200).json({
+    success: true,
+    message: `Product ${updatedProduct.isFeatured ? "marked as" : "removed from"} featured successfully`,
+    product: updatedProduct,
+  });
+};
+
+const updateFeaturedProductsCache = async () => {
+  const featuredProducts = await Product.find({ isFeatured: true }).lean();
+  await redis.set("featured_products", JSON.stringify(featuredProducts));
+};
