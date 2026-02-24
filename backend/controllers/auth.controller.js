@@ -168,7 +168,7 @@ export const refreshToken = async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Access token refreshed successfully",
-    accessToken: newAccessToken,
+    // accessToken: newAccessToken,
   });
 };
 

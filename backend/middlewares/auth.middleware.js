@@ -25,8 +25,9 @@ export const protectRoute = async (req, res, next) => {
 };
 
 export const adminRoute = (req, res, next) => {
-  if (req.user.role !== "admin") {
+  if (req.user?.role === "admin") {
+    next();
+  } else {
     return next(createHttpError(403, "Access denied - Admins only"));
   }
-  next();
 };

@@ -22,7 +22,7 @@ export const getFeaturedProducts = async (req, res, next) => {
     });
   }
   // get data from mongo db
-  featuredProducts = await product.find({ isFeatured: true }).lean();
+  featuredProducts = await Product.find({ isFeatured: true }).lean();
   if (!featuredProducts) {
     return next(createHttpError(404, "No featured products found"));
   }
@@ -41,7 +41,7 @@ export const createProduct = async (req, res, next) => {
   let cloudinaryRes = null;
 
   if (image) {
-    const cloudinaryRes = await cloudinary.uploader.upload(image, {
+    cloudinaryRes = await cloudinary.uploader.upload(image, {
       folder: "products",
     });
   }
@@ -75,6 +75,7 @@ export const deleteProduct = async (req, res, next) => {
       await cloudinary.uploader.destroy(`products/${publicId}`);
     } catch (error) {
       console.error("Error deleting image from Cloudinary:", error);
+      return next(createHttpError(500, "Failed to delete product image"));
     }
   }
 
@@ -87,7 +88,21 @@ export const deleteProduct = async (req, res, next) => {
 };
 
 export const getRecommendedProducts = async (req, res, next) => {
-  const recommendedProducts = await Product.aggregate([
-    { $sample: { size: 5 } }, // Get 5 random products
+  const products = await Product.aggregate([
+    { $sample: { size: 3 } },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        description: 1,
+        image: 1,
+        price: 1,
+      },
+    },
   ]);
+
+  res.status(200).json({
+    success: true,
+    products,
+  });
 };
