@@ -106,3 +106,13 @@ export const getRecommendedProducts = async (req, res, next) => {
     products,
   });
 };
+
+export const getProductsByCategory = async (req, res, next) => {
+  const { category } = req.params;
+  const products = await Product.find({ category });
+
+  res.status(200).json({
+    success: true,
+    products,
+  });
+};
