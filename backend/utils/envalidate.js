@@ -12,6 +12,7 @@ const env = cleanEnv(process.env, {
   CLOUDINARY_API_KEY: str(),
   CLOUDINARY_API_SECRET: str(),
   STRIPE_SECRET_KEY: str(),
+  FRONTEND_URL: str(),
 });
 
 export default env;
