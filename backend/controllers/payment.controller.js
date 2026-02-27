@@ -1,5 +1,7 @@
+import createHttpError from "http-errors";
 import stripe from "../lib/stripe.js";
 import couponModel from "../models/coupon.model.js";
+import Order from "../models/order.model.js";
 import env from "../utils/envalidate.js";
 
 export const createCheckoutSession = async (req, res, next) => {
@@ -57,6 +59,15 @@ export const createCheckoutSession = async (req, res, next) => {
     metadata: {
       userId: req.user._id.toString(),
       couponCode: couponCode || "",
+      products: JSON.stringify(
+        products.map((p) => {
+          return {
+            id: p._id,
+            quantity: p.quantity,
+            price: p.price,
+          };
+        }),
+      ),
     },
   });
 
@@ -90,4 +101,49 @@ const createNewCoupon = async (userId) => {
 
   await newCoupon.save();
   return newCoupon;
+};
+
+export const handleCheckoutSuccess = async (req, res, next) => {
+  const { sessionId } = req.body;
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+  if (!session) {
+    return next(createHttpError(404, "Checkout session not found!"));
+  }
+
+  if (session.payment_status !== "paid") {
+    return next(createHttpError(400, "Payment not completed!"));
+  }
+
+  if (session.metadata.couponCode) {
+    const coupon = await couponModel.findOneAndUpdate(
+      {
+        code: session.metadata.couponCode,
+        userId: session.metadata.userId,
+      },
+      {
+        isActive: false,
+      },
+    );
+  }
+
+  // create a new order in the database with session details
+  const products = JSON.parse(session.metadata.products);
+  const newOrder = new Order({
+    user: session.metadata.userId,
+    products: products.map((p) => ({
+      product: p.id,
+      quantity: p.quantity,
+      price: p.price,
+    })),
+    totalAmount: session.amount_total / 100, // convert from cents to dollars
+    stripeSessionId: sessionId,
+  });
+
+  await newOrder.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Checkout successful!",
+  });
 };
