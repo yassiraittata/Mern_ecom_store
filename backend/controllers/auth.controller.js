@@ -173,4 +173,9 @@ export const refreshToken = async (req, res, next) => {
 };
 
 // get profile
-export const getProfile = async (req, res, next) => {};
+export const getProfile = async (req, res, next) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
+};
