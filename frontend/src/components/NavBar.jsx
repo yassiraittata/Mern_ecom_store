@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [user, setUser] = useState(false); // Simulate user authentication status
-  const [isAdmin, setIsAdmin] = useState(false); // Simulate admin status
+  const [isAdmin, setIsAdmin] = useState(true); // Simulate admin status
   const cart = [{ id: 1, name: "Product 1", quantity: 2 }]; // Simulate cart items
 
   const logout = () => {
