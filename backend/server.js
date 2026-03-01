@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import createHttpError from "http-errors";
+import cors from "cors";
 
 import env from "./utils/envalidate.js";
 import connectDB from "./lib/db.js";
@@ -19,6 +20,15 @@ const PORT = env.PORT || 5000;
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// CORS middleware
+app.use(
+  cors({
+    origin: env.FRONTEND_URL,
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
 // routes
 app.use("/api/auth", authRoutes);
