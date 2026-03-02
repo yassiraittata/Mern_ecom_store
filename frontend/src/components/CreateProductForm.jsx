@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { PlusCircle, Upload, Loader } from "lucide-react";
 import { useProductStore } from "../stores/useProductStore";
+import toast from "react-hot-toast";
 
 const categories = [
   "jeans",
@@ -26,6 +27,19 @@ const CreateProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await createProduct(newProduct);
+      setNewProduct({
+        name: "",
+        description: "",
+        price: "",
+        category: "",
+        image: "",
+      });
+    } catch (error) {
+      toast.error("Failed to create product. Please try again.");
+      console.error("Error creating product:", error);
+    }
   };
 
   const handleImageChange = (e) => {
