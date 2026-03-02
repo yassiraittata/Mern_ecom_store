@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 export const useProductStore = create((set) => ({
   products: [],
   featuredProducts: [],
-  isLoading: false,
+  loading: false,
 
   fetchProducts: async (category = null) => {
     set({ isLoading: true });
@@ -32,4 +32,6 @@ export const useProductStore = create((set) => ({
       );
     }
   },
+
+  createProduct: async () => {},
 }));
