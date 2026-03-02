@@ -29,6 +29,14 @@ const CreateProductForm = () => {
   };
 
   const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewProduct({ ...newProduct, image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -153,8 +161,14 @@ const CreateProductForm = () => {
             <Upload className="h-5 w-5 inline-block mr-2" />
             Upload Image
           </label>
+        </div>
+        <div className="mt-1 flex items-center">
           {newProduct.image && (
-            <span className="ml-3 text-sm text-gray-400">Image uploaded </span>
+            <img
+              src={newProduct.image}
+              alt="Preview"
+              className="h-32 w-32 object-cover rounded-md border border-gray-600"
+            />
           )}
         </div>
 
