@@ -48,7 +48,27 @@ export const useProductStore = create((set) => ({
       toast.error(error.response?.data?.message || "Failed to fetch products");
     }
   },
-  deleteProduct: async (productId) => {},
+  deleteProduct: async (productId) => {
+    set({ loading: true });
+    try {
+      const res = await axios.delete(`/products/${productId}`);
+      if (!res.data.success) {
+        set({ loading: false });
+        return toast.error(
+          res.data.message || "Something went wrong. Please try again.",
+        );
+      }
+      set((state) => ({
+        products: state.products.filter((product) => product._id !== productId),
+        loading: false,
+      }));
+      toast.success(res.data.message || "Product deleted successfully!");
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response?.data?.message || "Failed to delete product");
+    }
+  },
+
   toggleFeaturedProduct: async (productId) => {
     set({ loading: true });
     try {
