@@ -4,11 +4,18 @@ import { redis } from "../lib/redis.js";
 import cloudinary from "../lib/cloudinary.js";
 
 export const getAllProducts = async (req, res, next) => {
-  const products = await Product.find({});
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
 
+  const total = await Product.countDocuments();
+
+  const products = await Product.find({}).skip(skip).limit(limit).lean();
   res.status(200).json({
     success: true,
     products,
+    totalPages: Math.ceil(total / limit),
+    totalItems: total,
   });
 };
 

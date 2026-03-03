@@ -12,7 +12,12 @@ import { protectRoute, adminRoute } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/", protectRoute, adminRoute, getAllProducts);
+router.get(
+  "/",
+  protectRoute,
+  adminRoute,
+  getAllProducts,
+);
 router.get("/featured", getFeaturedProducts);
 router.get("/recommendation", getRecommendedProducts);
 router.get("/category/:category", getProductsByCategory);
