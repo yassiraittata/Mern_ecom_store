@@ -51,7 +51,7 @@ const App = () => {
               )
             }
           />
-          <Route path="/category/:categoryName" element={<CategoryPage />} />
+          <Route path="/category/:category" element={<CategoryPage />} />
         </Routes>
       </div>
       <Toaster />

@@ -23,7 +23,7 @@ const CategoryPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {category.charAt(0).toUpperCase() + category.slice(1)}
+          {category?.charAt(0).toUpperCase() + category.slice(1)}
         </motion.h1>
 
         <motion.div
