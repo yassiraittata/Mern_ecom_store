@@ -49,5 +49,30 @@ export const useProductStore = create((set) => ({
     }
   },
   deleteProduct: async (productId) => {},
-  toggleFeaturedProduct: async (productId) => {},
+  toggleFeaturedProduct: async (productId) => {
+    set({ loading: true });
+    try {
+      const res = await axios.put(`/products/${productId}`);
+      if (!res.data.success) {
+        set({ loading: false });
+        return toast.error(
+          res.data.message || "Something went wrong. Please try again.",
+        );
+      }
+      set((state) => ({
+        products: state.products.map((product) =>
+          product._id === productId ? res.data.product : product,
+        ),
+        loading: false,
+      }));
+      toast.success(
+        res.data.message || "Product featured status toggled successfully!",
+      );
+    } catch (error) {
+      set({ loading: false });
+      toast.error(
+        error.response?.data?.message || "Failed to toggle featured status",
+      );
+    }
+  },
 }));
