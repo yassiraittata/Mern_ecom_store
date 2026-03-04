@@ -12,21 +12,15 @@ export const useCartStore = create((set, get) => ({
   setCart: (cart) => set({ cart }),
 
   getCartItems: async () => {
-    set({ loading: true });
     try {
       const res = await axios.get("/cart");
-      if (!res.data.success) {
-        set({ loading: false });
-        return toast.error(
-          res.data.message || "Something went wrong. Please try again.",
-        );
-      }
-      set({ cart: res.data.cart, loading: false });
+      console.log("Cart Items Response:", res.data);
+      set({ cart: res.data.cart });
       get().calculateTotals();
     } catch (error) {
-      set({ loading: false });
+      console.error("Error fetching cart items:", error);
       toast.error(
-        error.response?.data?.message || "Failed to fetch cart items",
+        error.response?.data?.message || "Failed to fetch cart items !!!",
       );
     }
   },
@@ -54,10 +48,9 @@ export const useCartStore = create((set, get) => ({
 
   calculateTotals: () => {
     const { cart, coupon } = get();
-    const subtotal = cart.reduce(
-      (acc, item) => acc + item.product.price * item.quantity,
-      0,
-    );
+    const subtotal = cart.reduce((acc, item) => {
+      return acc + Number(item.price) * item.quantity;
+    }, 0);
     let total = subtotal;
     if (coupon) {
       const discount = subtotal * (coupon.discountPercentage / 100);
