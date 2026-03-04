@@ -27,7 +27,7 @@ export const addToCart = async (req, res, next) => {
   const user = req.user;
 
   const existingProduct = user.cartItems.find(
-    (item) => item.product === productId,
+    (item) => item.product.toString() === productId,
   );
 
   if (existingProduct) {
