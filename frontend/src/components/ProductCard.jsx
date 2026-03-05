@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
       return;
     } else {
       // add to cart
-      addToCart(product._id);
+      addToCart(product);
     }
   };
 

@@ -25,17 +25,29 @@ export const useCartStore = create((set, get) => ({
     }
   },
 
-  addToCart: async (productId) => {
+  addToCart: async (product) => {
     set({ loading: true });
     try {
-      const res = await axios.post("/cart", { productId });
+      const res = await axios.post("/cart", { productId: product._id });
       if (!res.data.success) {
         set({ loading: false });
         return toast.error(
           res.data.message || "Something went wrong. Please try again.",
         );
       }
-      set({ cart: res.data.cart, loading: false });
+      set((prevState) => {
+        const existingItem = prevState.cart.find(
+          (item) => item._id === product._id,
+        );
+        const newCart = existingItem
+          ? prevState.cart.map((item) =>
+              item._id === product._id
+                ? { ...item, quantity: item.quantity + 1 }
+                : item,
+            )
+          : [...prevState.cart, { ...product, quantity: 1 }];
+        return { cart: newCart };
+      });
       toast.success(res.data.message || "Product added to cart");
       get().calculateTotals();
     } catch (error) {
@@ -58,4 +70,25 @@ export const useCartStore = create((set, get) => ({
     }
     set({ subtotal, total });
   },
+
+  removeFromCart: async (productId) => {
+    try {
+      const res = await axios.delete("/cart", { data: { productId } });
+
+      if (!res.data.success) {
+        return toast.error(
+          res.data.message || "Something went wrong. Please try again.",
+        );
+      }
+      set((state) => ({
+        cart: state.cart.filter((item) => item._id.toString() !== productId),
+      }));
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to remove product from cart",
+      );
+    }
+  },
+
+  updateQuantity: async (productId, quantity) => {},
 }));

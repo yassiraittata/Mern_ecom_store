@@ -41,7 +41,6 @@ export const addToCart = async (req, res, next) => {
   res.json({
     success: true,
     message: "Product added to cart",
-    cart: user.cartItems,
   });
 };
 
@@ -49,13 +48,15 @@ export const removeAllFromCart = async (req, res, next) => {
   const user = req.user;
   const { productId } = req.body;
 
-  user.cartItems = user.cartItems.filter((item) => item.product !== productId);
+  user.cartItems = user.cartItems.filter(
+    (item) => item.product.toString() !== productId,
+  );
 
   await user.save();
+
   res.json({
     success: true,
     message: "Product removed from cart",
-    cart: user.cartItems,
   });
 };
 

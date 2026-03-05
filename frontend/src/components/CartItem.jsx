@@ -2,9 +2,7 @@ import { Minus, Plus, Trash } from "lucide-react";
 import { useCartStore } from "../stores/useCartStore";
 
 const CartItem = ({ item }) => {
-  //   const { removeFromCart, updateQuantity } = useCartStore();
-  function removeFromCart(productId) {}
-  function updateQuantity(productId, quantity) {}
+  const { removeFromCart, updateQuantity } = useCartStore();
 
   return (
     <div className="rounded-lg border p-4 shadow-sm border-gray-700 bg-gray-800 md:p-6">
