@@ -77,16 +77,12 @@ export const updateQuantity = async (req, res, next) => {
       await user.save();
       return res.json({
         success: true,
-        message: "Product removed from cart",
-        cart: user.cartItems,
       });
     } else {
       existingItem.quantity = quantity;
       await user.save();
       return res.json({
         success: true,
-        message: "Cart updated",
-        cart: user.cartItems,
       });
     }
   }
