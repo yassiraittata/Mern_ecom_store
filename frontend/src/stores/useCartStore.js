@@ -5,10 +5,10 @@ import axios from "../lib/axios";
 
 export const useCartStore = create((set, get) => ({
   cart: [],
-  loading: false,
   coupon: null,
   total: 0,
   subtotoal: 0,
+  isCouponApplied: false,
   setCart: (cart) => set({ cart }),
 
   getCartItems: async () => {
@@ -26,11 +26,9 @@ export const useCartStore = create((set, get) => ({
   },
 
   addToCart: async (product) => {
-    set({ loading: true });
     try {
       const res = await axios.post("/cart", { productId: product._id });
       if (!res.data.success) {
-        set({ loading: false });
         return toast.error(
           res.data.message || "Something went wrong. Please try again.",
         );
@@ -51,7 +49,6 @@ export const useCartStore = create((set, get) => ({
       toast.success(res.data.message || "Product added to cart");
       get().calculateTotals();
     } catch (error) {
-      set({ loading: false });
       toast.error(
         error.response?.data?.message || "Failed to add product to cart",
       );
