@@ -19,7 +19,7 @@ router.get(
   getAllProducts,
 );
 router.get("/featured", getFeaturedProducts);
-router.get("/recommendation", getRecommendedProducts);
+router.get("/recommendations", getRecommendedProducts);
 router.get("/category/:category", getProductsByCategory);
 router.post("/", protectRoute, adminRoute, createProduct);
 router.put("/:id", protectRoute, adminRoute, toggleFeaturedProduct);

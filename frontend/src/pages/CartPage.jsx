@@ -5,6 +5,7 @@ import { ShoppingCart } from "lucide-react";
 import CartItem from "../components/CartItem";
 // import PeopleAlsoBought from "../components/PeopleAlsoBought";
 import OrderSummary from "../components/OrderSummary";
+import PeopleAlsoBought from "../components/PeopleAlsoBought";
 // import GiftCouponCard from "../components/GiftCouponCard";
 
 const CartPage = () => {
@@ -29,7 +30,7 @@ const CartPage = () => {
                 ))}
               </div>
             )}
-            {/* {cart.length > 0 && <PeopleAlsoBought />} */}
+            {cart.length > 0 && <PeopleAlsoBought />}
           </motion.div>
 
           {cart.length > 0 && (
@@ -40,7 +41,7 @@ const CartPage = () => {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <OrderSummary />
-              <GiftCouponCard />
+              {/* <GiftCouponCard /> */}
             </motion.div>
           )}
         </div>
