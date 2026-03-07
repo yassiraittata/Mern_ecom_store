@@ -25,6 +25,7 @@ export const createCheckoutSession = async (req, res, next) => {
         },
         unit_amount: amount,
       },
+      quantity: item.quantity || 1,
     };
   });
 
@@ -78,6 +79,7 @@ export const createCheckoutSession = async (req, res, next) => {
   res.status(200).json({
     success: true,
     sessionId: session.id,
+    url: session.url,
     totalAmount: totalAmount / 100,
   });
 };
