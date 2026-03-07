@@ -11,6 +11,8 @@ import AdminPage from "./pages/AdminPage";
 import CategoryPage from "./pages/CategoryPage";
 import CartPage from "./pages/CartPage";
 import { useCartStore } from "./stores/useCartStore";
+import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
+import PurchaseCancelPage from "./pages/PurchaseCancelPage";
 
 const App = () => {
   const { user, checkAuth, checkingAuth } = useUserStore();
@@ -21,7 +23,7 @@ const App = () => {
   }, [checkAuth]);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
     getCartItems();
   }, [getCartItems, user]);
 
@@ -64,6 +66,8 @@ const App = () => {
             path="/cart"
             element={user ? <CartPage /> : <Navigate to="/login" replace />}
           />
+          <Route path="/purchase-success" element={<PurchaseSuccessPage />} />
+          <Route path="/checkout-cancelled" element={<PurchaseCancelPage />} />
         </Routes>
       </div>
       <Toaster />
