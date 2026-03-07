@@ -10,6 +10,14 @@ export const useCartStore = create((set, get) => ({
   subtotoal: 0,
   isCouponApplied: false,
   setCart: (cart) => set({ cart }),
+  clearCart: () =>
+    set({
+      cart: [],
+      total: 0,
+      subtotal: 0,
+      coupon: null,
+      isCouponApplied: false,
+    }),
 
   getCartItems: async () => {
     try {
